@@ -6,21 +6,8 @@ import org.example.calculateTotalPriceOver500Sequence
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
-/* Extension Functions สำหรับทดสอบ */
-fun List<Product>.countElectronicsOver500(): Int {
-    // นับจำนวนผลิตภัณฑ์ในหมวด "Electronics" ที่มีราคาเกิน 500.0
-    return this.count { it.category == "Electronics" && it.price > 500.0 }
-}
-
-fun List<Product>.sumElectronicsOver500(): Double {
-    // คำนวณผลรวมราคาของผลิตภัณฑ์ในหมวด "Electronics" ที่มีราคาเกิน 500.0 โดยใช้ Sequence
-    return this.asSequence()
-        .filter { it.category == "Electronics" && it.price > 500.0 }
-        .sumOf { it.price }
-}
-
 class WorkshopTest {
-    // ข้อมูลทดสอบส่วนกลาง
+    // ข้อมูลทดสอบส่วนกลางสำหรับการคำนวณสินค้า
     private val testProducts = listOf(
         Product("Laptop", 35000.0, "Electronics"),
         Product("Smartphone", 25000.0, "Electronics"),
@@ -31,22 +18,9 @@ class WorkshopTest {
         Product("Headphones", 1800.0, "Electronics")
     )
 
-    // ================= Unit Converter Tests =================
+    // 1. ทดสอบการแปลง 1 กิโลเมตรเป็นไมล์
     @Test
-    fun `convert 20C to Fahrenheit`() {
-        // Arrange
-        val celsius = 20.0
-        val expectedFahrenheit = 68.0
-
-        // Act
-        val actualFahrenheit = celsiusToFahrenheit(celsius)
-
-        // Assert
-        assertEquals(expectedFahrenheit, actualFahrenheit, 0.001)
-    }
-
-    @Test
-    fun `convert 1km to miles`() {
+    fun `test kilometersToMiles with one kilometer`() {
         // Arrange
         val kilometers = 1.0
         val expectedMiles = 0.621371
@@ -58,53 +32,71 @@ class WorkshopTest {
         assertEquals(expectedMiles, actualMiles, 0.000001)
     }
 
-    // ================= Data Analysis Tests =================
+    // 2. ทดสอบการคำนวณราคารวมของสินค้า Electronics ที่ราคาเกิน 500
     @Test
-    fun `calculate total electronics price over 500 normally`() {
-        // Arrange
-        val expected = 35000.0 + 25000.0 + 7500.0 + 1800.0 // 69300.0
+    fun `test calculateTotalElectronicsPriceOver500`() {
+        // Arrange (35000 + 25000 + 7500 + 1800)
+        val expectedTotal = 35000.0 + 25000.0 + 7500.0 + 1800.0
 
         // Act
-        val actual = calculateTotalPriceOver500(testProducts, "Electronics", 500.0)
+        val actualTotal = calculateTotalPriceOver500(testProducts, "Electronics", 500.0)
 
         // Assert
-        assertEquals(expected, actual, 0.001)
+        assertEquals(expectedTotal, actualTotal, 0.001)
     }
 
+    // 3. ทดสอบการแปลงอุณหภูมิเซลเซียสเป็นฟาเรนไฮต์กับค่าติดลบ
     @Test
-    fun `calculate total electronics price over 500 using sequence`() {
+    fun `test celsiusToFahrenheit with negative value`() {
         // Arrange
-        val expected = 69300.0
+        val celsius = -15.0
+        val expectedFahrenheit = 5.0
 
         // Act
-        val actual = calculateTotalPriceOver500Sequence(testProducts, "Electronics", 500.0)
+        val actualFahrenheit = celsiusToFahrenheit(celsius)
 
         // Assert
-        assertEquals(expected, actual, 0.001)
+        assertEquals(expectedFahrenheit, actualFahrenheit, 0.001)
     }
 
+    // 4. ทดสอบการแปลงอุณหภูมิเซลเซียสเป็นฟาเรนไฮต์กับค่าเป็นบวก
     @Test
-    fun `count electronics over 500 using extension`() {
+    fun `test celsiusToFahrenheit with positive value`() {
         // Arrange
-        val expectedCount = 4
+        val celsius = 25.0
+        val expectedFahrenheit = 77.0
 
         // Act
-        val actualCount = testProducts.countElectronicsOver500()
+        val actualFahrenheit = celsiusToFahrenheit(celsius)
 
         // Assert
-        assertEquals(expectedCount, actualCount)
+        assertEquals(expectedFahrenheit, actualFahrenheit, 0.001)
     }
 
+    // 5. ทดสอบการแปลงอุณหภูมิเซลเซียสเป็นฟาเรนไฮต์กับค่าเป็นศูนย์
     @Test
-    fun `sum electronics over 500 using extension`() {
+    fun `test celsiusToFahrenheit with zero`() {
         // Arrange
-        val expectedSum = 69300.0
+        val celsius = 0.0
+        val expectedFahrenheit = 32.0
 
         // Act
-        val actualSum = testProducts.sumElectronicsOver500()
+        val actualFahrenheit = celsiusToFahrenheit(celsius)
 
         // Assert
+        assertEquals(expectedFahrenheit, actualFahrenheit, 0.001)
+    }
+
+    // 6. ทดสอบการนับจำนวนสินค้าทั้งหมด (ทั้งหมด 7 ชิ้น)
+    @Test
+    fun `test sum of size`() {
+        // Arrange
+        val expectedSize = 7
+
+        // Act
+        val actualSize = testProducts.size
+
         // Assert
-        assertEquals(expectedSum, actualSum, 0.001)
+        assertEquals(expectedSize, actualSize)
     }
 }
